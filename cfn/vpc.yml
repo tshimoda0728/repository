@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Metadata: 
+  "AWS::CloudFormation::Interface": 
+    ParameterGroups: 
+      - Label: 
+          default: "Project Name"
+        Parameters: 
+          - PJName
+      - Label: 
+          default: "Environment Configuration"
+        Parameters: 
+          - Env
+      - Label: 
+          default: "Network Configuration"
+        Parameters: 
+          - VPCCIDR
+
+# ------------------------------------------------------------#
+# Input Parameters
+# ------------------------------------------------------------# 
+Parameters:
+  PJName:
+    Type: String
+
+  Env:
+    Type: String
+    AllowedValues:
+      - prod
+      - stg
+      - dev
+
+  VPCCIDR:
+    Type: String
+    Default: 10.0.0.0/16
+
+Resources:
+# ------------------------------------------------------------#
+#  VPC
+# ------------------------------------------------------------#
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref CIDR 
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags: 
+        - Key: Name
+          Value: !Sub ${PJName}-${Env}-vpc
+
+# ------------------------------------------------------------#
+# Output Parameters
+# ------------------------------------------------------------# 
+Outputs:
+  VPC:
+    Value: !Ref VPC
+    Export: 
+      Name: !Sub ${PJName}-${Env}-vpc
