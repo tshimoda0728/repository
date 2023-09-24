@@ -1,0 +1,130 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Metadata: 
+  "AWS::CloudFormation::Interface": 
+    ParameterGroups: 
+      - Label: 
+          default: "Project Name"
+        Parameters: 
+          - PJName
+      - Label: 
+          default: "Environment Configuration"
+        Parameters: 
+          - Env
+      - Label: 
+          default: "Network Configuration"
+        Parameters: 
+          - VPCID
+          - PublicSubnet01a
+          - PublicSubnet02c
+          - PrivateSubnet01a
+          - PrivateSubnet02c
+
+# ------------------------------------------------------------#
+# Input Parameters
+# ------------------------------------------------------------# 
+Parameters:
+  PJName:
+    Type: String
+
+  Env:
+    Type: String
+    AllowedValues:
+      - prod
+      - stg
+      - dev
+
+  VPCID: 
+    Type: String
+
+  PublicSubnet01a:
+    Type: String
+
+  PublicSubnet02c:
+    Type: String
+
+  PrivateSubnet01a:
+    Type: String
+
+  PrivateSubnet02c:
+    Type: String
+
+Resources:
+  # ------------------------------------------------------------#
+  # Create Subnet
+  # ------------------------------------------------------------# 
+  PublicSubnet01:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      CidrBlock: !Ref PublicSubnet01a
+      AvailabilityZone: ap-northeast-1a
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${PJName}-${Env}-Public-01a-Subnet
+      VpcId: !Ref VPCID
+
+  PublicSubnet02:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      CidrBlock: !Ref PublicSubnet02c
+      AvailabilityZone: ap-northeast-1c
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${PJName}-${Env}-Public-02c-Subnet
+      VpcId: !Ref VPCID
+
+  PrivateSubnet01:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      CidrBlock: !Ref PrivateSubnet01a
+      AvailabilityZone: ap-northeast-1a
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${PJName}-${Env}-Private-01a-Subnet
+      VpcId: !Ref VPCID
+
+  PrivateSubnet02:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      CidrBlock: !Ref PrivateSubnet02c
+      AvailabilityZone: ap-northeast-1c
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${PJName}-${Env}-Private-02c-Subnet
+      VpcId: !Ref VPCID
+
+# ------------------------------------------------------------#
+# Output Parameters
+# ------------------------------------------------------------# 
+Outputs:
+  PublicSubnet01:
+    Description: 'Subnet For public Range, AZ:apne1a'
+    Value: !Ref PublicSubnet01
+    Export:
+      Name:
+        !Sub ${PJName}-${Env}-Public-01a-Subnet
+
+  PublicSubnet02:
+    Description: 'Subnet For public Range, AZ:apne1c'
+    Value: !Ref PublicSubnet02
+    Export:
+      Name:
+        !Sub ${PJName}-${Env}-Public-02c-Subnet
+
+  PrivateSubnet01:
+    Description: 'Subnet For private Range, AZ:apne1a'
+    Value: !Ref PrivateSubnet01
+    Export:
+      Name:
+        !Sub ${PJName}-${Env}-Private-01a-Subnet
+
+  PrivateSubnet02:
+    Description: 'Subnet For private Range, AZ:apne1c'
+    Value: !Ref PrivateSubnet02
+    Export:
+      Name:
+        !Sub ${PJName}-${Env}-Private-02c-Subnet

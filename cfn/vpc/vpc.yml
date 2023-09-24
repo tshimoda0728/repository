@@ -41,7 +41,7 @@ Resources:
   VPC:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock: !Ref CIDR 
+      CidrBlock: !Ref VPCCIDR 
       EnableDnsSupport: true
       EnableDnsHostnames: true
       Tags: 
