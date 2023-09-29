@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Metadata: 
+  "AWS::CloudFormation::Interface": 
+    ParameterGroups: 
+      - Label: 
+          default: "Project Name"
+        Parameters: 
+          - PJName
+      - Label: 
+          default: "Environment Configuration"
+        Parameters: 
+          - Env
+      - Label: 
+          default: "Network Configuration"
+        Parameters: 
+          - VPCID
+          - InternetGateWay
+
+# ------------------------------------------------------------#
+# Input Parameters
+# ------------------------------------------------------------# 
+Parameters:
+  PJName:
+    Type: String
+
+  Env:
+    Type: String
+    AllowedValues:
+      - prod
+      - stg
+      - dev
+  
+  VPCID:
+    Type: String
+  
+  InternetGateway:
+    Type: String
+
+Resources:
+  # ------------------------------------------------------------#
+  # InternetGateway
+  # ------------------------------------------------------------# 
+  InternetGateWay:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${PJName}-${Env}-IGW
+  
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPCID
+      InternetGatewayId: !Ref InternetGateWay
+
+# ------------------------------------------------------------#
+# Output Parameters
+# ------------------------------------------------------------# 
+Outputs:
+  InternetGateWay:
+    Value: !Ref InternetGateWay
+    Export: 
+      Name: !Sub ${PJName}-${Env}-IGW

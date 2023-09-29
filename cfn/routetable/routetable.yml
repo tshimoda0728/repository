@@ -1,0 +1,135 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Metadata: 
+  "AWS::CloudFormation::Interface": 
+    ParameterGroups: 
+      - Label: 
+          default: "Project Name"
+        Parameters: 
+          - PJName
+      - Label: 
+          default: "Environment Configuration"
+        Parameters: 
+          - Env
+      - Label: 
+          default: "Network Configuration"
+        Parameters: 
+          - VPCID
+          - InternetGateway
+          - PublicRouteTableSubnet01
+          - PublicRouteTableSubnet02
+          - PrivateRouteTableSubnet01
+          - PrivateRouteTableSubnet02
+
+# ------------------------------------------------------------#
+# Input Parameters
+# ------------------------------------------------------------# 
+Parameters:
+  PJName:
+    Type: String
+
+  Env:
+    Type: String
+    AllowedValues:
+      - prod
+      - stg
+      - dev
+  
+  VPCID:
+    Type: String
+
+  PublicRouteTableSubnet01:
+    Type: String
+  
+  PublicRouteTableSubnet02:
+    Type: String
+
+  PrivateRouteTableSubnet01:
+    Type: String
+
+  PrivateRouteTableSubnet02:
+    Type: String
+
+  InternetGateway:
+    Type: String
+
+Resources:
+  # ------------------------------------------------------------#
+  # Public RouteTable
+  # ------------------------------------------------------------# 
+  PublicTable:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      Tags:
+      - Key: Name
+        Value: !Sub ${PJName}-${Env}-Public-RouteTable
+      VpcId: !Ref VPCID
+
+  PublicTableAssociation01:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      RouteTableId: !Ref PublicTable
+      SubnetId: !Ref PublicRouteTableSubnet01
+
+  PublicTableAssociation02:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      RouteTableId: !Ref PublicTable
+      SubnetId: !Ref PublicRouteTableSubnet02
+
+  # ------------------------------------------------------------#
+  # Public RouteTable Routing
+  # ------------------------------------------------------------# 
+  PublicTableRoute01:
+    Type: "AWS::EC2::Route"
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+      RouteTableId: !Ref PublicTable
+
+  # ------------------------------------------------------------#
+  # Private RouteTable
+  # ------------------------------------------------------------# 
+  PrivateTable:
+    Type: "AWS::EC2::RouteTable"
+    Properties:
+      Tags:
+      - Key: Name
+        Value: !Sub ${PJName}-${Env}-Private-RouteTable
+      VpcId: !Ref VPCID
+
+  PrivateTableAssociation01:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      RouteTableId: !Ref PrivateTable
+      SubnetId: !Ref PrivateRouteTableSubnet01
+
+  PrivateTableAssociation02:
+    Type: "AWS::EC2::SubnetRouteTableAssociation"
+    Properties:
+      RouteTableId: !Ref PrivateTable
+      SubnetId: !Ref PrivateRouteTableSubnet02
+
+  # ------------------------------------------------------------#
+  # Private RouteTable Routing
+  # ------------------------------------------------------------# 
+#  PrivateTableRoute01:
+#    Type: "AWS::EC2::Route"
+#    Properties:
+#      DestinationCidrBlock: 0.0.0.0/0
+#      GatewayId: !Ref InternetGateWay
+#      RouteTableId: !Ref PublicTable
+
+# ------------------------------------------------------------#
+# Output Parameters
+# ------------------------------------------------------------# 
+Outputs:
+  PublicTable:
+    Value: !Ref PublicTable
+    Export: 
+      Name: !Sub ${PJName}-${Env}-PublicTable
+
+  PrivateTable:
+      Value: !Ref PrivateTable
+      Export: 
+        Name: !Sub ${PJName}-${Env}-PrivateTable
