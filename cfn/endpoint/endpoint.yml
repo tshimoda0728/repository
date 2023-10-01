@@ -1,0 +1,198 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Metadata: 
+  "AWS::CloudFormation::Interface": 
+    ParameterGroups: 
+      - Label: 
+          default: "Project Name"
+        Parameters: 
+          - PJName
+      - Label: 
+          default: "Environment Configuration"
+        Parameters: 
+          - Env
+      - Label: 
+          default: "Network Configuration"
+
+        Parameters: 
+          - VPCID
+          - PrivateRouteTable
+          - InterfaceSubnetId1
+          - InterfaceSubnetId2
+          - InterfaceSecurityGroupId
+
+# ------------------------------------------------------------#
+# Input Parameters
+# ------------------------------------------------------------#
+Parameters:
+  PJName:
+      Type: String
+
+  Env:
+    Type: String
+    AllowedValues:
+      - prod
+      - stg
+      - dev
+  VPCID:
+    Type: AWS::EC2::VPC::Id
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+
+  InterfaceSubnetId1:
+    Type: AWS::EC2::Subnet::Id
+
+  InterfaceSubnetId2:
+    Type: AWS::EC2::Subnet::Id
+
+  InterfaceSecurityGroupId:
+    Type: AWS::EC2::SecurityGroup::Id
+
+# ------------------------------------------------------------#
+# Logs End Point
+# ------------------------------------------------------------#
+Resources:
+  logsEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.logs
+      SubnetIds:
+        - !Ref InterfaceSubnetId1
+        - !Ref InterfaceSubnetId2
+      VpcId: !Ref VPCID
+      VpcEndpointType: Interface
+      SecurityGroupIds:
+        - !Ref InterfaceSecurityGroupId
+      PrivateDnsEnabled: true
+
+# ------------------------------------------------------------#
+# monitoring End Point
+# ------------------------------------------------------------#
+  MonitoringEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.monitoring
+      SubnetIds:
+        - !Ref InterfaceSubnetId1
+        - !Ref InterfaceSubnetId2
+      VpcId: !Ref VPCID
+      VpcEndpointType: Interface
+      SecurityGroupIds:
+        - !Ref InterfaceSecurityGroupId
+      PrivateDnsEnabled: true
+
+# ------------------------------------------------------------#
+# events End Point
+# ------------------------------------------------------------#
+  eventsEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.events
+      SubnetIds:
+        - !Ref InterfaceSubnetId1
+        - !Ref InterfaceSubnetId2
+      VpcId: !Ref VPCID
+      VpcEndpointType: Interface
+      SecurityGroupIds:
+        - !Ref InterfaceSecurityGroupId
+      PrivateDnsEnabled: true
+  
+# ------------------------------------------------------------#
+# ssm End Point
+# ------------------------------------------------------------#
+  ssmEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ssm
+      SubnetIds:
+        - !Ref InterfaceSubnetId1
+        - !Ref InterfaceSubnetId2
+      VpcId: !Ref VPCID
+      VpcEndpointType: Interface
+      SecurityGroupIds:
+        - !Ref InterfaceSecurityGroupId
+      PrivateDnsEnabled: true
+
+# ------------------------------------------------------------#
+# kms End Point
+# ------------------------------------------------------------#
+  kmsEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.kms
+      SubnetIds:
+        - !Ref InterfaceSubnetId1
+        - !Ref InterfaceSubnetId2
+      VpcId: !Ref VPCID
+      VpcEndpointType: Interface
+      SecurityGroupIds:
+        - !Ref InterfaceSecurityGroupId
+      PrivateDnsEnabled: true
+
+# ------------------------------------------------------------#
+# ecr End Point
+# ------------------------------------------------------------#
+  ecrEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub ${PJName}-${Env}-ecr-endpoint
+      SubnetIds:
+        - !Ref InterfaceSubnetId1
+        - !Ref InterfaceSubnetId2
+      VpcId: !Ref VPCID
+      VpcEndpointType: Interface
+      SecurityGroupIds:
+        - !Ref InterfaceSecurityGroupId
+      PrivateDnsEnabled: true
+
+# ------------------------------------------------------------#
+# S3 End Point
+# ------------------------------------------------------------#
+  s3Endpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.s3
+      VpcEndpointType: Gateway
+      RouteTableIds:
+      - !Ref PrivateRouteTable
+      VpcId: !Ref VPCID
+
+
+# ------------------------------------------------------------#
+# Output Parameters
+# ------------------------------------------------------------# 
+Outputs:
+  logsEndpoint:
+    Value: !Ref logsEndpoint
+    Export: 
+      Name: !Sub ${PJName}-${Env}-log-endpoint
+
+  MonitoringEndpoint:
+    Value: !Ref MonitoringEndpoint
+    Export: 
+      Name: !Sub ${PJName}-${Env}-monitoring-endpoint
+
+  eventsEndpoint:
+    Value: !Ref eventsEndpoint
+    Export: 
+      Name: !Sub ${PJName}-${Env}-events-endpoint
+
+  ssmEndpoint:
+    Value: !Ref ssmEndpoint
+    Export: 
+      Name: !Sub ${PJName}-${Env}-ssm-endpoint
+  
+  kmsEndpoint:
+    Value: !Ref kmsEndpoint
+    Export: 
+      Name: !Sub ${PJName}-${Env}-kms-endpoint
+  
+  ecrEndpoint:
+    Value: !Ref ecrEndpoint
+    Export: 
+      Name: !Sub ${PJName}-${Env}-ecr-endpoint
+
+  s3Endpoint:
+    Value: !Ref s3Endpoint
+    Export: 
+      Name: !Sub ${PJName}-${Env}-s3-endpoint

@@ -33,9 +33,6 @@ Parameters:
   
   VPCID:
     Type: String
-  
-  InternetGateway:
-    Type: String
 
 Resources:
   # ------------------------------------------------------------#
@@ -51,7 +48,7 @@ Resources:
   AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      VpcId: !Ref VPCID
+      VPCID: !Ref VPCID
       InternetGatewayId: !Ref InternetGateWay
 
 # ------------------------------------------------------------#

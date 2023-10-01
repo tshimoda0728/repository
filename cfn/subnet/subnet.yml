@@ -62,7 +62,7 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${PJName}-${Env}-Public-01a-Subnet
-      VpcId: !Ref VPCID
+      VPCID: !Ref VPCID
 
   PublicSubnet02:
     Type: 'AWS::EC2::Subnet'
@@ -73,7 +73,7 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${PJName}-${Env}-Public-02c-Subnet
-      VpcId: !Ref VPCID
+      VPCID: !Ref VPCID
 
   PrivateSubnet01:
     Type: 'AWS::EC2::Subnet'
@@ -84,7 +84,7 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${PJName}-${Env}-Private-01a-Subnet
-      VpcId: !Ref VPCID
+      VPCID: !Ref VPCID
 
   PrivateSubnet02:
     Type: 'AWS::EC2::Subnet'
@@ -95,7 +95,7 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${PJName}-${Env}-Private-02c-Subnet
-      VpcId: !Ref VPCID
+      VPCID: !Ref VPCID
 
 # ------------------------------------------------------------#
 # Output Parameters
