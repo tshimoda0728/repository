@@ -37,7 +37,7 @@ Parameters:
     Type: AWS::EC2::VPC::Id
 
   PrivateRouteTable:
-    Type: AWS::EC2::RouteTable
+    Type: String
 
   InterfaceSubnetId1:
     Type: AWS::EC2::Subnet::Id
@@ -63,7 +63,7 @@ Resources:
       VpcEndpointType: Interface
       SecurityGroupIds:
         - !Ref InterfaceSecurityGroupId
-      PrivateDnsEnabled: true
+      PrivateDnsEnabled: false
 
 # ------------------------------------------------------------#
 # monitoring End Point
@@ -79,7 +79,7 @@ Resources:
       VpcEndpointType: Interface
       SecurityGroupIds:
         - !Ref InterfaceSecurityGroupId
-      PrivateDnsEnabled: true
+      PrivateDnsEnabled: false
 
 # ------------------------------------------------------------#
 # events End Point
@@ -95,7 +95,7 @@ Resources:
       VpcEndpointType: Interface
       SecurityGroupIds:
         - !Ref InterfaceSecurityGroupId
-      PrivateDnsEnabled: true
+      PrivateDnsEnabled: false
   
 # ------------------------------------------------------------#
 # ssm End Point
@@ -111,7 +111,7 @@ Resources:
       VpcEndpointType: Interface
       SecurityGroupIds:
         - !Ref InterfaceSecurityGroupId
-      PrivateDnsEnabled: true
+      PrivateDnsEnabled: false
 
 # ------------------------------------------------------------#
 # kms End Point
@@ -127,7 +127,7 @@ Resources:
       VpcEndpointType: Interface
       SecurityGroupIds:
         - !Ref InterfaceSecurityGroupId
-      PrivateDnsEnabled: true
+      PrivateDnsEnabled: false
 
 # ------------------------------------------------------------#
 # ecr End Point
@@ -135,7 +135,7 @@ Resources:
   ecrEndpoint:
     Type: AWS::EC2::VPCEndpoint
     Properties:
-      ServiceName: !Sub ${PJName}-${Env}-ecr-endpoint
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ecr.dkr
       SubnetIds:
         - !Ref InterfaceSubnetId1
         - !Ref InterfaceSubnetId2
@@ -143,7 +143,7 @@ Resources:
       VpcEndpointType: Interface
       SecurityGroupIds:
         - !Ref InterfaceSecurityGroupId
-      PrivateDnsEnabled: true
+      PrivateDnsEnabled: false 
 
 # ------------------------------------------------------------#
 # S3 End Point

@@ -113,16 +113,16 @@ Resources:
   # ------------------------------------------------------------#
   # Private RouteTable Routing
   # ------------------------------------------------------------# 
-#  PrivateTableRoute01:
-#    Type: "AWS::EC2::Route"
-#    Properties:
-#      DestinationCidrBlock: 0.0.0.0/0
-#      GatewayId: !Ref InternetGateWay
-#      RouteTableId: !Ref PublicTable
+  PrivateTableRoute01:
+    Type: "AWS::EC2::Route"
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref vpce-0b6379d91347b5195
+      RouteTableId: !Ref PrivateTable
 
-# ------------------------------------------------------------#
-# Output Parameters
-# ------------------------------------------------------------# 
+  # ------------------------------------------------------------#
+  # Output Parameters
+  # ------------------------------------------------------------# 
 Outputs:
   PublicTable:
     Value: !Ref PublicTable
